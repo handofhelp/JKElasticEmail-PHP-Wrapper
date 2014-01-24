@@ -1,7 +1,7 @@
 <?php
 /**
  * Elastic Email PHP integration courtesy of Hand of Help 
- * @version 0.1.8
+ * @version 0.1.9
  * 
  * @see github.com/handofhelp
  * @see http://elasticemail.com/api-documentation/subscriber-list-management
@@ -40,6 +40,8 @@ class JKElasticEmail {
 
 	public static $unsubscribe_list = '';
 	public static $bounced_list = '';
+	public static $contact_lists = array();
+
 	public static function SetUsername($username){
 		self::$username = $username;
 	}
@@ -59,6 +61,22 @@ class JKElasticEmail {
         $url .= 'username='.urlencode(self::$username).'&api_key='.urlencode(self::$api_key);
         return $url;
 	}
+
+    /**
+     *  Fetch a list of all contacts (could be huge)
+     *  from a particular list name
+     *  Better if an application does this not so frequently so we don't have to waste time on the api calls
+     */
+    public static function FetchContacts($listname = ''){
+   		$listname = self::setlist($listname);
+   		if (empty(self::$contact_lists[$listname])){
+   			$url = self::addUsernameApiKeyToUrl('https://api.elasticemail.com/lists/get-contacts?');
+   			$url .= '&listname='.urlencode($listname);
+
+   			self::$contact_lists[$listname] = self::go($url);
+   		}
+   		return self::$contact_lists[$listname];
+    }
 
     /**
      * Fetch the entire Unsubscribed list, which means user clicked "Unsubscribe" inside an email
