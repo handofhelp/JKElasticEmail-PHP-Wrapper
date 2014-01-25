@@ -185,13 +185,27 @@ class JKElasticEmail {
 
     /**
      * Attempt to add email address to the list
+     * @param string $email  email to add to list
+     * @param string $listname the list to add to, leave empty to use default list
+     * @param array $other_fields additional fields to store in ENewsletter list
      */
-    public static function Subscribe($email, $listname=''){
+    public static function Subscribe($email, $listname='', $other_fields = array()){
     	$listname = self::setlist($listname);
     	$url = self::addUsernameApiKeyToUrl('https://api.elasticemail.com/lists/create-contact?').
     	     '&email='.urlencode($email).'&listname='.urlencode($listname);
+        if (!empty($other_fields)){
+            $allowed_fields = array('firstname', 'lastname', 'birthday');
+            foreach($other_fields as $key => $value){
+                $key = strtolower($key);
+                if (!in_array($allowed_fields, $key)){
+                    continue;
+                }
+                $url .= '&'.urlencode($key).'='.urlencode($value);
+            }
+        }
     	return self::go($url);
     }
+
 
 
     /**
