@@ -218,6 +218,19 @@ class JKElasticEmail {
     	return self::go($url);
     }
 
+
+    /**
+     * Attempt to delete email address from list
+     */
+    public static function AddToUnsubscribeList($email, $listname=''){
+        $listname = self::setlist($listname);
+        $url = self::addUsernameApiKeyToUrl('https://api.elasticemail.com/subscriber/addblockedrecipient?').
+             '&email='.urlencode($email).'&listname='.urlencode($listname).'&version=2&reason=2';
+        return self::go($url);
+    }
+    
+
+
     /**
      * First check if the email is blocked or user already unsubscribed, 
      * and then attempt to subscribe it if it is not blocked
