@@ -42,6 +42,12 @@ class JKElasticEmail {
 	public static $bounced_list = '';
 	public static $contact_lists = array();
 
+    public static function Inactive(){
+        if (empty(self::$api_key)){ return true; }
+        if (empty(self::$username)){ return true; }
+        return false;
+    }
+
 	public static function SetUsername($username){
 		self::$username = $username;
 	}
