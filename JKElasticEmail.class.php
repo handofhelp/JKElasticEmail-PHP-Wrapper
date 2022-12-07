@@ -199,7 +199,7 @@ class JKElasticEmail {
     	$listname = self::setlist($listname);
     	$url = self::addUsernameApiKeyToUrl('https://api.elasticemail.com/lists/create-contact?').
     	     '&email='.urlencode((string)$email).'&listname='.urlencode((string)$listname);
-        if (!empty($other_fields)){
+        if (!empty($other_fields) && is_array($other_fields)){
             $allowed_fields = array('firstname', 'lastname', 'birthday');
             foreach($other_fields as $key => $value){
                 $key = strtolower($key);
@@ -224,6 +224,14 @@ class JKElasticEmail {
     	return self::go($url);
     }
 
+
+    /**
+     * Find an email on the list (lists could be huge see above)
+     */
+    public static function FindContact($email, $listname = ''){
+        $contacts = self::FetchContacts($listname);
+        return (stripos($contacts, $email) !== false);
+    }
 
     /**
      * Attempt to delete email address from list
@@ -258,6 +266,13 @@ class JKElasticEmail {
      * @return string contents after we fetch url
      */
 	private static function go($url){
-		return file_get_contents($url);
+        $ctx = stream_context_create(array('http'=>
+           array(
+                'timeout' => 6,  //6 seconds is long enough to make someone annoyed
+           )
+        ));
+
+        $contents = file_get_contents($url, false, $ctx);
+        return $contents;
 	}
 }
