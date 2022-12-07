@@ -58,7 +58,7 @@ class JKElasticEmail {
 	 * @see go()
 	 */
 	private static function addUsernameApiKeyToUrl($url=''){
-        $url .= 'username='.urlencode(self::$username).'&api_key='.urlencode(self::$api_key);
+        $url .= 'username='.urlencode((string)self::$username).'&api_key='.urlencode((string)self::$api_key);
         return $url;
 	}
 
@@ -71,7 +71,7 @@ class JKElasticEmail {
    		$listname = self::setlist($listname);
    		if (empty(self::$contact_lists[$listname])){
    			$url = self::addUsernameApiKeyToUrl('https://api.elasticemail.com/lists/get-contacts?');
-   			$url .= '&listname='.urlencode($listname);
+   			$url .= '&listname='.urlencode((string)$listname);
 
    			self::$contact_lists[$listname] = self::go($url);
    		}
@@ -192,7 +192,7 @@ class JKElasticEmail {
     public static function Subscribe($email, $listname='', $other_fields = array()){
     	$listname = self::setlist($listname);
     	$url = self::addUsernameApiKeyToUrl('https://api.elasticemail.com/lists/create-contact?').
-    	     '&email='.urlencode($email).'&listname='.urlencode($listname);
+    	     '&email='.urlencode((string)$email).'&listname='.urlencode((string)$listname);
         if (!empty($other_fields)){
             $allowed_fields = array('firstname', 'lastname', 'birthday');
             foreach($other_fields as $key => $value){
@@ -200,7 +200,7 @@ class JKElasticEmail {
                 if (!in_array($allowed_fields, $key)){
                     continue;
                 }
-                $url .= '&'.urlencode($key).'='.urlencode($value);
+                $url .= '&'.urlencode((string)$key).'='.urlencode((string)$value);
             }
         }
     	return self::go($url);
@@ -214,7 +214,7 @@ class JKElasticEmail {
     public static function Delete($email, $listname=''){
     	$listname = self::setlist($listname);
     	$url = self::addUsernameApiKeyToUrl('https://api.elasticemail.com/lists/delete-contact?').
-    	     '&email='.urlencode($email).'&listname='.urlencode($listname);
+    	     '&email='.urlencode((string)$email).'&listname='.urlencode((string)$listname);
     	return self::go($url);
     }
 
@@ -225,7 +225,7 @@ class JKElasticEmail {
     public static function AddToUnsubscribeList($email, $listname=''){
         $listname = self::setlist($listname);
         $url = self::addUsernameApiKeyToUrl('https://api.elasticemail.com/subscriber/addblockedrecipient?').
-             '&email='.urlencode($email).'&listname='.urlencode($listname).'&version=2&reason=2';
+             '&email='.urlencode((string)$email).'&listname='.urlencode((string)$listname).'&version=2&reason=2';
         return self::go($url);
     }
     
